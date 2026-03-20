@@ -1,7 +1,17 @@
 [
   {
+    "latex": "\\Alpha",
+    "label": "希腊字母 Α (大写)",
+    "category": "希腊字母"
+  },
+  {
     "latex": "\\alpha",
     "label": "希腊字母 α",
+    "category": "希腊字母"
+  },
+  {
+    "latex": "\\Beta",
+    "label": "希腊字母 Β (大写)",
     "category": "希腊字母"
   },
   {
@@ -12,6 +22,251 @@
   {
     "latex": "\\Gamma",
     "label": "希腊字母 Γ (大写)",
+    "category": "希腊字母"
+  },
+  {
+    "latex": "\\gamma",
+    "label": "希腊字母 γ",
+    "category": "希腊字母"
+  },
+  {
+    "latex": "\\Delta",
+    "label": "希腊字母 Δ (大写)",
+    "category": "希腊字母"
+  },
+  {
+    "latex": "\\delta",
+    "label": "希腊字母 δ",
+    "category": "希腊字母"
+  },
+  {
+    "latex": "\\Epsilon",
+    "label": "希腊字母 Ε (大写)",
+    "category": "希腊字母"
+  },
+  {
+    "latex": "\\epsilon",
+    "label": "希腊字母 ϵ",
+    "category": "希腊字母"
+  },
+  {
+    "latex": "\\varepsilon",
+    "label": "希腊字母 ε (变体)",
+    "category": "希腊字母"
+  },
+  {
+    "latex": "\\Zeta",
+    "label": "希腊字母 Ζ (大写)",
+    "category": "希腊字母"
+  },
+  {
+    "latex": "\\zeta",
+    "label": "希腊字母 ζ",
+    "category": "希腊字母"
+  },
+  {
+    "latex": "\\Eta",
+    "label": "希腊字母 Η (大写)",
+    "category": "希腊字母"
+  },
+  {
+    "latex": "\\eta",
+    "label": "希腊字母 η",
+    "category": "希腊字母"
+  },
+  {
+    "latex": "\\Theta",
+    "label": "希腊字母 Θ (大写)",
+    "category": "希腊字母"
+  },
+  {
+    "latex": "\\theta",
+    "label": "希腊字母 θ",
+    "category": "希腊字母"
+  },
+  {
+    "latex": "\\vartheta",
+    "label": "希腊字母 ϑ (变体)",
+    "category": "希腊字母"
+  },
+  {
+    "latex": "\\Iota",
+    "label": "希腊字母 Ι (大写)",
+    "category": "希腊字母"
+  },
+  {
+    "latex": "\\iota",
+    "label": "希腊字母 ι",
+    "category": "希腊字母"
+  },
+  {
+    "latex": "\\Kappa",
+    "label": "希腊字母 Κ (大写)",
+    "category": "希腊字母"
+  },
+  {
+    "latex": "\\kappa",
+    "label": "希腊字母 κ",
+    "category": "希腊字母"
+  },
+  {
+    "latex": "\\Lambda",
+    "label": "希腊字母 Λ (大写)",
+    "category": "希腊字母"
+  },
+  {
+    "latex": "\\lambda",
+    "label": "希腊字母 λ",
+    "category": "希腊字母"
+  },
+  {
+    "latex": "\\Mu",
+    "label": "希腊字母 Μ (大写)",
+    "category": "希腊字母"
+  },
+  {
+    "latex": "\\mu",
+    "label": "希腊字母 μ",
+    "category": "希腊字母"
+  },
+  {
+    "latex": "\\Nu",
+    "label": "希腊字母 Ν (大写)",
+    "category": "希腊字母"
+  },
+  {
+    "latex": "\\nu",
+    "label": "希腊字母 ν",
+    "category": "希腊字母"
+  },
+  {
+    "latex": "\\Xi",
+    "label": "希腊字母 Ξ (大写)",
+    "category": "希腊字母"
+  },
+  {
+    "latex": "\\xi",
+    "label": "希腊字母 ξ",
+    "category": "希腊字母"
+  },
+  {
+    "latex": "\\Omicron",
+    "label": "希腊字母 Ο (大写)",
+    "category": "希腊字母"
+  },
+  {
+    "latex": "\\omicron",
+    "label": "希腊字母 ο",
+    "category": "希腊字母"
+  },
+  {
+    "latex": "\\Pi",
+    "label": "希腊字母 Π (大写)",
+    "category": "希腊字母"
+  },
+  {
+    "latex": "\\pi",
+    "label": "希腊字母 π",
+    "category": "希腊字母"
+  },
+  {
+    "latex": "\\varpi",
+    "label": "希腊字母 ϖ (变体)",
+    "category": "希腊字母"
+  },
+  {
+    "latex": "\\Rho",
+    "label": "希腊字母 Ρ (大写)",
+    "category": "希腊字母"
+  },
+  {
+    "latex": "\\rho",
+    "label": "希腊字母 ρ",
+    "category": "希腊字母"
+  },
+  {
+    "latex": "\\varrho",
+    "label": "希腊字母 ϱ (变体)",
+    "category": "希腊字母"
+  },
+  {
+    "latex": "\\Sigma",
+    "label": "希腊字母 Σ (大写)",
+    "category": "希腊字母"
+  },
+  {
+    "latex": "\\sigma",
+    "label": "希腊字母 σ",
+    "category": "希腊字母"
+  },
+  {
+    "latex": "\\varsigma",
+    "label": "希腊字母 ς (变体)",
+    "category": "希腊字母"
+  },
+  {
+    "latex": "\\Tau",
+    "label": "希腊字母 Τ (大写)",
+    "category": "希腊字母"
+  },
+  {
+    "latex": "\\tau",
+    "label": "希腊字母 τ",
+    "category": "希腊字母"
+  },
+  {
+    "latex": "\\Upsilon",
+    "label": "希腊字母 Υ (大写)",
+    "category": "希腊字母"
+  },
+  {
+    "latex": "\\upsilon",
+    "label": "希腊字母 υ",
+    "category": "希腊字母"
+  },
+  {
+    "latex": "\\Phi",
+    "label": "希腊字母 Φ (大写)",
+    "category": "希腊字母"
+  },
+  {
+    "latex": "\\phi",
+    "label": "希腊字母 ϕ",
+    "category": "希腊字母"
+  },
+  {
+    "latex": "\\varphi",
+    "label": "希腊字母 φ (变体)",
+    "category": "希腊字母"
+  },
+  {
+    "latex": "\\Chi",
+    "label": "希腊字母 Χ (大写)",
+    "category": "希腊字母"
+  },
+  {
+    "latex": "\\chi",
+    "label": "希腊字母 χ",
+    "category": "希腊字母"
+  },
+  {
+    "latex": "\\Psi",
+    "label": "希腊字母 Ψ (大写)",
+    "category": "希腊字母"
+  },
+  {
+    "latex": "\\psi",
+    "label": "希腊字母 ψ",
+    "category": "希腊字母"
+  },
+  {
+    "latex": "\\Omega",
+    "label": "希腊字母 Ω (大写)",
+    "category": "希腊字母"
+  },
+  {
+    "latex": "\\omega",
+    "label": "希腊字母 ω",
     "category": "希腊字母"
   },
   {
@@ -180,4 +435,3 @@
     "category": "矩阵与括号"
   }
 ]
-
