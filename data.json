@@ -272,37 +272,37 @@
   {
     "latex": "+",
     "label": "加号",
-    "category": "算术运算符"
+    "category": "数学符号"
   },
   {
     "latex": "-",
     "label": "减号",
-    "category": "算术运算符"
+    "category": "数学符号"
   },
   {
     "latex": "\\times",
     "label": "乘号",
-    "category": "算术运算符"
+    "category": "数学符号"
   },
   {
     "latex": "\\div",
     "label": "除号",
-    "category": "算术运算符"
+    "category": "数学符号"
   },
   {
     "latex": "\\sum",
     "label": "求和符号 ∑",
-    "category": "算术运算符"
+    "category": "数学符号"
   },
   {
     "latex": "\\prod",
     "label": "求积符号 ∏",
-    "category": "算术运算符"
+    "category": "数学符号"
   },
   {
     "latex": "\\infty",
     "label": "无穷大",
-    "category": "算术运算符"
+    "category": "数学符号"
   },
   {
     "latex": "=",
