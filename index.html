@@ -99,9 +99,33 @@
 
   <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
     <header class="mb-10 text-center max-w-3xl mx-auto">
-      <h1 id="titleHeader" class="text-4xl font-extrabold text-slate-900 mb-4 tracking-tight">符号对照表</h1>
-      <p class="text-lg text-slate-500">常用 LaTeX 符号参考（仅“公式相关”）。可搜索并在管理员模式下编辑。</p>
+      <h1 id="titleHeader" class="text-4xl font-extrabold text-slate-900 mb-4 tracking-tight">Latex符号对照表</h1>
+      <p class="text-lg text-slate-500">常用 LaTeX 符号参考。</p>
     </header>
+
+    <!-- 在线尝试 (Playground) 区域 -->
+    <section class="mb-12 bg-white rounded-2xl shadow-sm hover:shadow-md transition-shadow duration-300 border border-slate-200 p-6">
+      <h2 class="text-xl font-bold text-slate-800 mb-4 flex items-center gap-2">
+        <svg class="w-5 h-5 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path></svg>
+        在线尝试 (Playground)
+      </h2>
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <!-- 输入区 -->
+        <div class="flex flex-col">
+          <label for="playgroundInput" class="block text-sm font-semibold text-slate-600 mb-2">输入 LaTeX 源码</label>
+          <textarea id="playgroundInput" rows="5" placeholder="在此输入组合公式进行测试，例如：\int_{a}^{b} x^2 \,dx..."
+                    class="w-full flex-1 p-4 bg-slate-50 border border-slate-200 rounded-xl focus:bg-white focus:ring-4 focus:ring-blue-100 focus:border-blue-400 transition-all duration-300 outline-none font-mono text-sm resize-y leading-relaxed"></textarea>
+        </div>
+        <!-- 预览区 -->
+        <div class="flex flex-col">
+          <label class="block text-sm font-semibold text-slate-600 mb-2">实时渲染结果</label>
+          <div id="playgroundOutput" class="flex-1 p-4 border border-slate-200 rounded-xl bg-slate-50 min-h-[140px] flex items-center justify-center overflow-auto transition-all duration-300">
+            <!-- 渲染结果将在这里显示 -->
+            <span class="text-slate-400 text-sm">等待输入...</span>
+          </div>
+        </div>
+      </div>
+    </section>
 
     <div class="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-12">
       <!-- 类别统计图 (增加 hover 阴影) -->
@@ -233,6 +257,10 @@
       } catch (e) { 
         console.error('数据加载失败', e); 
       }
+
+      // 初始化 Playground 示例内容
+      document.getElementById('playgroundInput').value = "f(x) = \\int_{-\\infty}^\\infty \\hat f(\\xi)\\,e^{2 \\pi i \\xi x} \\,d\\xi";
+      renderPlayground();
     }
 
     // 渲染类别筛选按钮 (加入微交互动效)
@@ -421,7 +449,7 @@
     // 实时搜索
     document.getElementById('searchInput').addEventListener('input', renderSymbols);
     
-    // 实时预览 LaTeX 输入
+    // 实时预览 LaTeX 输入 (模态框内)
     document.getElementById('newSymbolCode').addEventListener('input', (e) => {
       const preview = document.getElementById('newSymbolPreview');
       try { katex.render(e.target.value, preview, {throwOnError:false}); }
@@ -462,6 +490,26 @@
         }
       });
     }
+
+    // Playground (在线尝试区域) 逻辑
+    function renderPlayground() {
+      const input = document.getElementById('playgroundInput').value.trim();
+      const output = document.getElementById('playgroundOutput');
+      if (!input) {
+        output.innerHTML = '<span class="text-slate-400 text-sm">等待输入...</span>';
+        return;
+      }
+      try { 
+        katex.render(input, output, {
+          throwOnError: false,
+          displayMode: true // 大公式模式
+        }); 
+      }
+      catch (e) { 
+        output.innerHTML = '<span class="text-slate-400 text-sm">格式解析中...</span>'; 
+      }
+    }
+    document.getElementById('playgroundInput').addEventListener('input', renderPlayground);
 
     window.onload = initApp;
   </script>
