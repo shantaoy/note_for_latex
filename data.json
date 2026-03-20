@@ -300,6 +300,11 @@
     "category": "算术运算符"
   },
   {
+    "latex": "\\infty",
+    "label": "无穷大",
+    "category": "算术运算符"
+  },
+  {
     "latex": "=",
     "label": "等号",
     "category": "关系符号"
