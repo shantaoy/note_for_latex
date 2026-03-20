@@ -1,0 +1,459 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LaTeX 交互式符号对照表</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- 使用特定版本的 Chart.js 以确保稳定性 -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/contrib/auto-render.min.js"></script>
+    <style>
+        body {
+            background-color: #f8fafc;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            overflow-x: hidden;
+        }
+        .chart-container {
+            position: relative;
+            width: 100%;
+            max-width: 500px;
+            margin-left: auto;
+            margin-right: auto;
+            height: 350px;
+            max-height: 400px;
+        }
+        .toast {
+            visibility: hidden;
+            min-width: 250px;
+            background-color: #333;
+            color: #fff;
+            text-align: center;
+            border-radius: 8px;
+            padding: 12px;
+            position: fixed;
+            z-index: 100;
+            left: 50%;
+            bottom: 30px;
+            transform: translateX(-50%);
+            opacity: 0;
+            transition: opacity 0.3s, bottom 0.3s;
+        }
+        .toast.show {
+            visibility: visible;
+            opacity: 1;
+            bottom: 50px;
+        }
+        .symbol-card {
+            transition: all 0.2s ease-in-out;
+            position: relative;
+        }
+        .symbol-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+        }
+        #modalBackdrop {
+            display: none;
+            background-color: rgba(15, 23, 42, 0.5);
+            backdrop-filter: blur(4px);
+        }
+        .delete-btn {
+            display: none;
+        }
+        .symbol-card:hover .delete-btn {
+            display: flex;
+        }
+    </style>
+</head>
+<body class="text-slate-800 antialiased">
+
+    <!-- Chosen Palette: Slate and Blue -->
+    <!-- Application Structure Plan: Dashboard layout with persistence logic. Fixed ReferenceError by ensuring Chart.js is loaded and using its UMD build. Added full Greek alphabet, angle support, and deletion functionality as requested previously. -->
+    <!-- Visualization & Content Choices: Uses Chart.js for data overview and KaTeX for high-fidelity math rendering. -->
+    <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
+
+    <nav class="bg-white border-b border-slate-200 sticky top-0 z-40 shadow-sm">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between h-16 items-center">
+                <div class="flex-shrink-0 flex items-center gap-2">
+                    <span class="text-2xl">∑</span>
+                    <span class="font-bold text-xl tracking-tight text-slate-900">LaTeX 交互指南</span>
+                </div>
+                <div class="flex-1 max-w-md ml-8">
+                    <div class="relative">
+                        <span class="absolute inset-y-0 left-0 flex items-center pl-3 text-slate-400">
+                            &#128269;
+                        </span>
+                        <input type="text" id="searchInput" placeholder="搜索符号名称或代码 (如 'theta', '角度')..." class="block w-full rounded-full border-0 py-2 pl-10 pr-4 text-slate-900 shadow-sm ring-1 ring-inset ring-slate-300 placeholder:text-slate-400 focus:ring-2 focus:ring-inset focus:ring-blue-600 sm:text-sm sm:leading-6 outline-none transition-all">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        
+        <header class="mb-10 text-center max-w-3xl mx-auto">
+            <h1 class="text-4xl font-extrabold tracking-tight text-slate-900 sm:text-5xl mb-4">学术排版的得力助手</h1>
+            <p class="text-lg leading-8 text-slate-600">
+                本应用集成了全套希腊字母（大小写及变体）以及角度表示法（$30^\circ$）。数据保存在本地浏览器中，支持搜索、添加和删除。
+            </p>
+        </header>
+
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-12">
+            
+            <section class="lg:col-span-1 bg-white rounded-2xl shadow-sm border border-slate-200 p-6 flex flex-col">
+                <h2 class="text-xl font-bold text-slate-900 mb-2">符号库构成概览</h2>
+                <div class="flex-1 flex items-center justify-center w-full">
+                    <div class="chart-container">
+                        <canvas id="categoryChart"></canvas>
+                    </div>
+                </div>
+            </section>
+
+            <section class="lg:col-span-2 bg-white rounded-2xl shadow-sm border border-slate-200 p-6">
+                <div id="categoryFilters" class="flex flex-wrap gap-2 mb-6"></div>
+                <div id="symbolsGrid" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 h-[600px] overflow-y-auto pr-2 pb-4"></div>
+            </section>
+        </div>
+    </main>
+
+    <button onclick="toggleModal(true)" title="添加自定义符号" class="fixed bottom-8 right-8 w-14 h-14 bg-blue-600 text-white rounded-full shadow-lg hover:bg-blue-700 transition-all flex items-center justify-center text-3xl z-40 focus:outline-none focus:ring-4 focus:ring-blue-300">
+        +
+    </button>
+
+    <div id="modalBackdrop" class="fixed inset-0 z-50 flex items-center justify-center p-4">
+        <div class="bg-white rounded-2xl shadow-2xl w-full max-w-md overflow-hidden transform transition-all">
+            <div class="px-6 py-4 border-b border-slate-100 flex justify-between items-center bg-slate-50">
+                <h3 class="text-lg font-bold text-slate-900">添加新符号</h3>
+                <button onclick="toggleModal(false)" class="text-slate-400 hover:text-slate-600 text-2xl">&times;</button>
+            </div>
+            <form id="addSymbolForm" class="p-6 space-y-4">
+                <div>
+                    <label class="block text-sm font-semibold text-slate-700 mb-1">符号名称 / 作用</label>
+                    <input type="text" id="newSymbolName" required placeholder="例如：我的常用符号" class="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none">
+                </div>
+                <div>
+                    <label class="block text-sm font-semibold text-slate-700 mb-1">LaTeX 命令</label>
+                    <input type="text" id="newSymbolCode" required placeholder="例如：\alpha^2" class="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none font-mono">
+                </div>
+                <div>
+                    <label class="block text-sm font-semibold text-slate-700 mb-1">所属分类</label>
+                    <select id="newSymbolCategory" class="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none bg-white">
+                        <option value="基础算术">基础算术</option>
+                        <option value="大型算符">大型算符</option>
+                        <option value="常用函数">常用函数</option>
+                        <option value="微分导数">微分导数</option>
+                        <option value="希腊字母">希腊字母</option>
+                        <option value="物理修饰">物理修饰</option>
+                    </select>
+                </div>
+                <div class="pt-4 flex gap-3">
+                    <button type="button" onclick="toggleModal(false)" class="flex-1 py-2 px-4 border border-slate-300 text-slate-700 rounded-lg hover:bg-slate-50 transition-colors">取消</button>
+                    <button type="submit" class="flex-1 py-2 px-4 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors">保存符号</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div id="copyToast" class="toast text-sm font-medium">已复制到剪贴板！</div>
+
+    <script>
+        const defaultData = [
+            // 基础算术
+            { id: 1, category: "基础算术", name: "加", example: "a + b", code: "a + b" },
+            { id: 2, category: "基础算术", name: "减", example: "a - b", code: "a - b" },
+            { id: 3, category: "基础算术", name: "加减", example: "x \\pm y", code: "x \\pm y" },
+            { id: 4, category: "基础算术", name: "乘", example: "a \\times b", code: "a \\times b" },
+            { id: 47, category: "基础算术", name: "角度 (30度)", example: "30^\\circ", code: "30^\\circ" },
+            { id: 5, category: "基础算术", name: "除", example: "6 \\div 2", code: "6 \\div 2" },
+            { id: 6, category: "基础算术", name: "不等", example: "a \\neq b", code: "a \\neq b" },
+            { id: 8, category: "基础算术", name: "小于等于", example: "a \\le b", code: "a \\le b" },
+            { id: 9, category: "基础算术", name: "大于等于", example: "a \\ge b", code: "a \\ge b" },
+
+            // 希腊字母 - 小写 (全套)
+            { id: 101, category: "希腊字母", name: "alpha", example: "\\alpha", code: "\\alpha" },
+            { id: 102, category: "希腊字母", name: "beta", example: "\\beta", code: "\\beta" },
+            { id: 103, category: "希腊字母", name: "gamma", example: "\\gamma", code: "\\gamma" },
+            { id: 104, category: "希腊字母", name: "delta", example: "\\delta", code: "\\delta" },
+            { id: 105, category: "希腊字母", name: "epsilon", example: "\\epsilon", code: "\\epsilon" },
+            { id: 106, category: "希腊字母", name: "zeta", example: "\\zeta", code: "\\zeta" },
+            { id: 107, category: "希腊字母", name: "eta", example: "\\eta", code: "\\eta" },
+            { id: 108, category: "希腊字母", name: "theta", example: "\\theta", code: "\\theta" },
+            { id: 109, category: "希腊字母", name: "iota", example: "\\iota", code: "\\iota" },
+            { id: 110, category: "希腊字母", name: "kappa", example: "\\kappa", code: "\\kappa" },
+            { id: 111, category: "希腊字母", name: "lambda", example: "\\lambda", code: "\\lambda" },
+            { id: 112, category: "希腊字母", name: "mu", example: "\\mu", code: "\\mu" },
+            { id: 113, category: "希腊字母", name: "nu", example: "\\nu", code: "\\nu" },
+            { id: 114, category: "希腊字母", name: "xi", example: "\\xi", code: "\\xi" },
+            { id: 115, category: "希腊字母", name: "pi", example: "\\pi", code: "\\pi" },
+            { id: 116, category: "希腊字母", name: "rho", example: "\\rho", code: "\\rho" },
+            { id: 117, category: "希腊字母", name: "sigma", example: "\\sigma", code: "\\sigma" },
+            { id: 118, category: "希腊字母", name: "tau", example: "\\tau", code: "\\tau" },
+            { id: 119, category: "希腊字母", name: "upsilon", example: "\\upsilon", code: "\\upsilon" },
+            { id: 120, category: "希腊字母", name: "phi", example: "\\phi", code: "\\phi" },
+            { id: 121, category: "希腊字母", name: "chi", example: "\\chi", code: "\\chi" },
+            { id: 122, category: "希腊字母", name: "psi", example: "\\psi", code: "\\psi" },
+            { id: 123, category: "希腊字母", name: "omega", example: "\\omega", code: "\\omega" },
+
+            // 希腊字母 - 变体
+            { id: 124, category: "希腊字母", name: "varepsilon", example: "\\varepsilon", code: "\\varepsilon" },
+            { id: 125, category: "希腊字母", name: "vartheta", example: "\\vartheta", code: "\\vartheta" },
+            { id: 126, category: "希腊字母", name: "varpi", example: "\\varpi", code: "\\varpi" },
+            { id: 127, category: "希腊字母", name: "varrho", example: "\\varrho", code: "\\varrho" },
+            { id: 128, category: "希腊字母", name: "varsigma", example: "\\varsigma", code: "\\varsigma" },
+            { id: 129, category: "希腊字母", name: "varphi", example: "\\varphi", code: "\\varphi" },
+
+            // 希腊字母 - 大写
+            { id: 130, category: "希腊字母", name: "Gamma (大写)", example: "\\Gamma", code: "\\Gamma" },
+            { id: 131, category: "希腊字母", name: "Delta (大写)", example: "\\Delta", code: "\\Delta" },
+            { id: 132, category: "希腊字母", name: "Theta (大写)", example: "\\Theta", code: "\\Theta" },
+            { id: 133, category: "希腊字母", name: "Lambda (大写)", example: "\\Lambda", code: "\\Lambda" },
+            { id: 134, category: "希腊字母", name: "Xi (大写)", example: "\\Xi", code: "\\Xi" },
+            { id: 135, category: "希腊字母", name: "Pi (大写)", example: "\\Pi", code: "\\Pi" },
+            { id: 136, category: "希腊字母", name: "Sigma (大写)", example: "\\Sigma", code: "\\Sigma" },
+            { id: 137, category: "希腊字母", name: "Upsilon (大写)", example: "\\Upsilon", code: "\\Upsilon" },
+            { id: 138, category: "希腊字母", name: "Phi (大写)", example: "\\Phi", code: "\\Phi" },
+            { id: 139, category: "希腊字母", name: "Psi (大写)", example: "\\Psi", code: "\\Psi" },
+            { id: 140, category: "希腊字母", name: "Omega (大写)", example: "\\Omega", code: "\\Omega" },
+
+            // 其他分类
+            { id: 10, category: "大型算符", name: "求和", example: "\\sum_{i=1}^{n} x_i", code: "\\sum_{i=1}^{n} x_i" },
+            { id: 11, category: "大型算符", name: "乘积", example: "\\prod_{k=1}^{\\infty} a_k", code: "\\prod_{k=1}^{\\infty} a_k" },
+            { id: 12, category: "大型算符", name: "积分", example: "\\int_{a}^{b} f(x) dx", code: "\\int_{a}^{b} f(x) dx" },
+            { id: 42, category: "常用函数", name: "对数", example: "\\log_{10} x", code: "\\log_{10} x" },
+            { id: 44, category: "常用函数", name: "正弦", example: "\\sin \\theta", code: "\\sin \\theta" },
+            { id: 18, category: "微分导数", name: "导数", example: "\\frac{dy}{dx}", code: "\\frac{dy}{dx}" },
+            { id: 35, category: "物理修饰", name: "矢量", example: "\\vec{F}", code: "\\vec{F}" },
+            { id: 40, category: "物理修饰", name: "约化普朗克", example: "\\hbar", code: "\\hbar" }
+        ];
+
+        let currentCategory = "全部";
+        let searchQuery = "";
+        let chartInstance = null;
+        let userData = JSON.parse(localStorage.getItem('userLatexSymbols') || "[]");
+
+        const colors = {
+            "基础算术": "#3b82f6",
+            "大型算符": "#8b5cf6",
+            "常用函数": "#f43f5e",
+            "微分导数": "#ec4899",
+            "希腊字母": "#10b981",
+            "物理修饰": "#f59e0b"
+        };
+
+        function getFullData() {
+            return [...defaultData, ...userData];
+        }
+
+        function toggleModal(show) {
+            const modal = document.getElementById('modalBackdrop');
+            modal.style.display = show ? 'flex' : 'none';
+        }
+
+        function initApp() {
+            // 确保在渲染任何东西之前，DOM 已经准备好了
+            renderFilters();
+            renderGrid();
+            // 在调用 initChart 之前增加一个小延时，确保库已定义
+            setTimeout(() => {
+                initChart();
+            }, 50);
+            setupSearch();
+            
+            document.getElementById('addSymbolForm').onsubmit = function(e) {
+                e.preventDefault();
+                const name = document.getElementById('newSymbolName').value;
+                const code = document.getElementById('newSymbolCode').value;
+                const category = document.getElementById('newSymbolCategory').value;
+                
+                const newSymbol = {
+                    id: Date.now(),
+                    category: category,
+                    name: name,
+                    example: code,
+                    code: code,
+                    isUserCreated: true
+                };
+                
+                userData.push(newSymbol);
+                localStorage.setItem('userLatexSymbols', JSON.stringify(userData));
+                
+                this.reset();
+                toggleModal(false);
+                refreshApp();
+                showToast(`已添加: ${name}`);
+            };
+        }
+
+        function deleteSymbol(id) {
+            userData = userData.filter(item => item.id !== id);
+            localStorage.setItem('userLatexSymbols', JSON.stringify(userData));
+            refreshApp();
+            showToast("已删除自定义符号");
+        }
+
+        function refreshApp() {
+            renderGrid();
+            initChart();
+            renderFilters();
+        }
+
+        function getFilteredData() {
+            return getFullData().filter(item => {
+                const matchCategory = currentCategory === "全部" || item.category === currentCategory;
+                const matchSearch = item.name.toLowerCase().includes(searchQuery.toLowerCase()) || 
+                                    item.code.toLowerCase().includes(searchQuery.toLowerCase());
+                return matchCategory && matchSearch;
+            });
+        }
+
+        function renderFilters() {
+            const container = document.getElementById('categoryFilters');
+            const allData = getFullData();
+            const categories = ["全部", ...new Set(allData.map(i => i.category))];
+            
+            container.innerHTML = categories.map(cat => {
+                const isActive = cat === currentCategory;
+                const baseClass = "px-4 py-1.5 rounded-full text-sm font-medium transition-colors cursor-pointer border";
+                const activeClass = isActive 
+                    ? "bg-slate-800 text-white border-slate-800 shadow-md" 
+                    : "bg-white text-slate-600 border-slate-300 hover:bg-slate-50";
+                
+                return `<button onclick="setCategory('${cat}')" class="${baseClass} ${activeClass}">${cat}</button>`;
+            }).join('');
+        }
+
+        function setCategory(cat) {
+            currentCategory = cat;
+            renderFilters();
+            renderGrid();
+        }
+
+        function setupSearch() {
+            const input = document.getElementById('searchInput');
+            input.addEventListener('input', (e) => {
+                searchQuery = e.target.value;
+                renderGrid();
+            });
+        }
+
+        function renderGrid() {
+            const container = document.getElementById('symbolsGrid');
+            const data = getFilteredData();
+
+            if (data.length === 0) {
+                container.innerHTML = `<div class="col-span-full py-12 text-center text-slate-400">未找到匹配的符号。</div>`;
+                return;
+            }
+
+            container.innerHTML = data.map(item => {
+                const isUserItem = item.isUserCreated === true;
+                return `
+                <div onclick="copyToClipboard('${item.code.replace(/\\/g, '\\\\').replace(/'/g, "\\'")}')" class="symbol-card bg-white rounded-xl border border-slate-200 p-4 cursor-pointer flex flex-col justify-between group">
+                    ${isUserItem ? `
+                        <button onclick="event.stopPropagation(); deleteSymbol(${item.id})" class="delete-btn absolute -top-2 -right-2 w-6 h-6 bg-red-500 text-white rounded-full items-center justify-center text-xs shadow-sm hover:bg-red-600 transition-colors z-10">
+                            &times;
+                        </button>
+                    ` : ''}
+                    <div class="flex justify-between items-start mb-4">
+                        <span class="text-xs font-semibold px-2 py-1 rounded bg-slate-100 text-slate-600">${item.category}</span>
+                    </div>
+                    <div class="text-center py-4 mb-4 bg-slate-50 rounded-lg overflow-x-auto min-h-[64px] flex items-center justify-center">
+                        <span class="text-xl math-tex">\\[ ${item.example} \\]</span>
+                    </div>
+                    <div>
+                        <div class="text-sm font-medium text-slate-900 mb-1">${item.name}</div>
+                        <code class="text-xs text-pink-600 bg-pink-50 px-2 py-1 rounded block truncate" title="${item.code}">${item.code}</code>
+                    </div>
+                </div>
+            `}).join('');
+
+            renderMathInElement(container, {
+                delimiters: [
+                    {left: "\\[", right: "\\]", display: true},
+                    {left: "$", right: "$", display: false}
+                ],
+                throwOnError: false
+            });
+        }
+
+        function initChart() {
+            const canvas = document.getElementById('categoryChart');
+            if (!canvas) return;
+            
+            // 安全检查：如果 Chart 未定义，则跳过初始化
+            if (typeof Chart === 'undefined') {
+                console.error('Chart.js 尚未加载。');
+                return;
+            }
+
+            const ctx = canvas.getContext('2d');
+            const allData = getFullData();
+            const categories = [...new Set(allData.map(i => i.category))];
+            const counts = categories.map(cat => allData.filter(i => i.category === cat).length);
+            const bgColors = categories.map(cat => colors[cat] || "#cbd5e1");
+
+            if (chartInstance) chartInstance.destroy();
+
+            chartInstance = new Chart(ctx, {
+                type: 'doughnut',
+                data: {
+                    labels: categories,
+                    datasets: [{
+                        data: counts,
+                        backgroundColor: bgColors,
+                        borderWidth: 0,
+                        hoverOffset: 4
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'bottom',
+                            labels: {
+                                padding: 20,
+                                font: { size: 12 },
+                                usePointStyle: true
+                            }
+                        }
+                    },
+                    cutout: '65%',
+                    onClick: (event, elements) => {
+                        if (elements.length > 0) {
+                            const index = elements[0].index;
+                            const cat = chartInstance.data.labels[index];
+                            setCategory(cat);
+                        }
+                    }
+                }
+            });
+        }
+
+        function copyToClipboard(text) {
+            const textArea = document.createElement("textarea");
+            textArea.value = text;
+            document.body.appendChild(textArea);
+            textArea.select();
+            document.execCommand('copy');
+            textArea.remove();
+            showToast(`已复制: ${text}`);
+        }
+
+        function showToast(message) {
+            const toast = document.getElementById("copyToast");
+            if (!toast) return;
+            toast.innerText = message;
+            toast.classList.add("show");
+            setTimeout(() => toast.classList.remove("show"), 2500);
+        }
+
+        // 使用 window.onload 确保所有外部资源（包括 Chart.js）都已加载
+        window.onload = initApp;
+    </script>
+</body>
+</html>
