@@ -170,7 +170,7 @@
           <select id="newSymbolCategory"
                   class="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl focus:bg-white focus:ring-4 focus:ring-blue-100 focus:border-blue-400 transition-all duration-300 outline-none">
             <option>希腊字母</option>
-            <option>算术运算符</option>
+            <option>数学符号</option>
             <option>关系符号</option>
             <option>微积分与微分算子</option>
             <option>物理专用符号</option>
@@ -275,7 +275,7 @@
     // 渲染类别筛选按钮 (加入微交互动效)
     function renderCategories() {
       const container = document.getElementById('categoryFilters');
-      const cats = ['全部','希腊字母','算术运算符','关系符号','微积分与微分算子','物理专用符号','集合与逻辑符号','矩阵与括号'];
+      const cats = ['全部','希腊字母','数学符号','关系符号','微积分与微分算子','物理专用符号','集合与逻辑符号','矩阵与括号'];
       container.innerHTML = '';
       cats.forEach(cat => {
         const btn = document.createElement('button');
@@ -487,7 +487,7 @@
     function renderChart() {
       const ctx = document.getElementById('categoryChart');
       if (ctx.chart) ctx.chart.destroy();
-      const cats = ['希腊字母','算术运算符','关系符号','微积分与微分算子','物理专用符号','集合与逻辑符号','矩阵与括号'];
+      const cats = ['希腊字母','数学符号','关系符号','微积分与微分算子','物理专用符号','集合与逻辑符号','矩阵与括号'];
       const counts = cats.map(cat => allData.filter(i=>i.category===cat).length);
       
       ctx.chart = new Chart(ctx, {
