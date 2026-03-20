@@ -402,14 +402,32 @@
       const category = document.getElementById('newSymbolCategory').value;
       const label = document.getElementById('newSymbolLabel').value.trim();
       const latex = document.getElementById('newSymbolCode').value.trim();
-      if (isEditing && editingIndex>=0) {
+      
+      if (isEditing && editingIndex >= 0) {
         allData[editingIndex] = {latex, label, category};
       } else {
-        allData.push({latex, label, category});
+        // 查找属于同一个 category 的最后一个元素的索引
+        let insertIndex = -1;
+        for (let i = allData.length - 1; i >= 0; i--) {
+          if (allData[i].category === category) {
+            insertIndex = i;
+            break;
+          }
+        }
+        
+        if (insertIndex !== -1) {
+          // 如果找到了同类元素，则插入到该元素之后
+          allData.splice(insertIndex + 1, 0, {latex, label, category});
+        } else {
+          // 如果没有找到（新类别），则直接追加到末尾
+          allData.push({latex, label, category});
+        }
       }
-      await saveData(isEditing?'编辑符号':'添加符号');
+      
+      await saveData(isEditing ? '编辑符号' : '添加符号');
       toggleModal(false);
-      renderSymbols(); renderChart();
+      renderSymbols(); 
+      renderChart();
     });
 
     // 保存到 GitHub
