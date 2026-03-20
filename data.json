@@ -433,5 +433,10 @@
     "latex": "\\left( x + y \\right)",
     "label": "可伸缩括号",
     "category": "矩阵与括号"
+  },
+  {
+    "latex": "\\vec{F}",
+    "label": "矢量",
+    "category": "物理专用符号"
   }
 ]
