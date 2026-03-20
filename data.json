@@ -1,12 +1,174 @@
 {
-  "formula_related":,
-  "latex_language": [
+  "formula_related": [
     {
-      "id": "env_itemize",
-      "category": "排版环境",
-      "name": "无序列表",
-      "latex_code": "\\begin{itemize}\n  \\item 第一项\n  \\item 第二项\n\\end{itemize}",
-      "description": "用于在实验报告或论文中列举不具备严格先后次序的条目或仪器清单。"
-    }
-  ]
-}
+      "id": "id-greek-alpha",
+      "category": "希腊字母",
+      "command": "\\alpha",
+      "description": "小写 Alpha",
+      "example": "\\alpha"
+    },
+    {
+      "id": "id-greek-beta",
+      "category": "希腊字母",
+      "command": "\\beta",
+      "description": "小写 Beta",
+      "example": "\\beta"
+    },
+    {
+      "id": "id-greek-gamma",
+      "category": "希腊字母",
+      "command": "\\gamma",
+      "description": "小写 Gamma",
+      "example": "\\gamma"
+    },
+    {
+      "id": "id-greek-Gamma-up",
+      "category": "希腊字母",
+      "command": "\\Gamma",
+      "description": "大写 Gamma (常用作伽马函数)",
+      "example": "\\Gamma(z) = \\int_0^\\infty t^{z-1} e^{-t} dt"
+    },
+    {
+      "id": "id-greek-delta",
+      "category": "希腊字母",
+      "command": "\\delta",
+      "description": "小写 Delta (常用作变分或狄拉克δ函数)",
+      "example": "\\delta(x - x_0)"
+    },
+    {
+      "id": "id-greek-Delta-up",
+      "category": "希腊字母",
+      "command": "\\Delta",
+      "description": "大写 Delta (常用作拉普拉斯算符或差值)",
+      "example": "\\Delta Q = \\Delta U + \\Delta W"
+    },
+    {
+      "id": "id-greek-epsilon",
+      "category": "希腊字母",
+      "command": "\\epsilon",
+      "description": "小写 Epsilon (常用作介电常数或 Levi-Civita 符号)",
+      "example": "\\epsilon_{ijk}"
+    },
+    {
+      "id": "id-greek-varepsilon",
+      "category": "希腊字母",
+      "command": "\\varepsilon",
+      "description": "变体 Epsilon",
+      "example": "\\varepsilon_0"
+    },
+    {
+      "id": "id-greek-theta",
+      "category": "希腊字母",
+      "command": "\\theta",
+      "description": "小写 Theta",
+      "example": "\\theta"
+    },
+    {
+      "id": "id-greek-lambda",
+      "category": "希腊字母",
+      "command": "\\lambda",
+      "description": "小写 Lambda (波长或特征值)",
+      "example": "\\hat{A}\\ket{\\psi} = \\lambda\\ket{\\psi}"
+    },
+    {
+      "id": "id-greek-mu",
+      "category": "希腊字母",
+      "command": "\\mu",
+      "description": "小写 Mu",
+      "example": "\\mu_0"
+    },
+    {
+      "id": "id-greek-nu",
+      "category": "希腊字母",
+      "command": "\\nu",
+      "description": "小写 Nu (频率)",
+      "example": "E = h\\nu"
+    },
+    {
+      "id": "id-greek-pi",
+      "category": "希腊字母",
+      "command": "\\pi",
+      "description": "小写 Pi",
+      "example": "\\pi"
+    },
+    {
+      "id": "id-greek-rho",
+      "category": "希腊字母",
+      "command": "\\rho",
+      "description": "小写 Rho (密度或密度矩阵)",
+      "example": "\\hat{\\rho} = \\sum_i p_i \\ket{\\psi_i}\\bra{\\psi_i}"
+    },
+    {
+      "id": "id-greek-sigma",
+      "category": "希腊字母",
+      "command": "\\sigma",
+      "description": "小写 Sigma (泡利矩阵或标准差)",
+      "example": "\\sigma_x, \\sigma_y, \\sigma_z"
+    },
+    {
+      "id": "id-greek-Sigma-up",
+      "category": "希腊字母",
+      "command": "\\Sigma",
+      "description": "大写 Sigma (求和号请用 \\sum)",
+      "example": "\\Sigma"
+    },
+    {
+      "id": "id-greek-tau",
+      "category": "希腊字母",
+      "command": "\\tau",
+      "description": "小写 Tau",
+      "example": "\\tau"
+    },
+    {
+      "id": "id-greek-phi",
+      "category": "希腊字母",
+      "command": "\\phi",
+      "description": "小写 Phi (标量势或波函数)",
+      "example": "\\phi(\\vec{r}, t)"
+    },
+    {
+      "id": "id-greek-varphi",
+      "category": "希腊字母",
+      "command": "\\varphi",
+      "description": "变体 Phi",
+      "example": "\\varphi"
+    },
+    {
+      "id": "id-greek-psi",
+      "category": "希腊字母",
+      "command": "\\psi",
+      "description": "小写 Psi (波函数)",
+      "example": "\\psi(x)"
+    },
+    {
+      "id": "id-greek-Psi-up",
+      "category": "希腊字母",
+      "command": "\\Psi",
+      "description": "大写 Psi (总波函数)",
+      "example": "\\Psi(\\vec{r}, t)"
+    },
+    {
+      "id": "id-greek-omega",
+      "category": "希腊字母",
+      "command": "\\omega",
+      "description": "小写 Omega (角频率)",
+      "example": "\\omega"
+    },
+    {
+      "id": "id-greek-Omega-up",
+      "category": "希腊字母",
+      "command": "\\Omega",
+      "description": "大写 Omega (立体角或微观状态数)",
+      "example": "S = k_B \\ln \\Omega"
+    },
+    {
+      "id": "id-op-hbar",
+      "category": "物理专用",
+      "command": "\\hbar",
+      "description": "约化普朗克常数",
+      "example": "i\\hbar \\frac{\\partial}{\\partial t} \\Psi = \\hat{H} \\Psi"
+    },
+    {
+      "id": "id-op-nabla",
+      "category": "微积分与算符",
+      "command": "\\nabla",
