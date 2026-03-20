@@ -1,0 +1,12 @@
+{
+  "formula_related":,
+  "latex_language": [
+    {
+      "id": "env_itemize",
+      "category": "排版环境",
+      "name": "无序列表",
+      "latex_code": "\\begin{itemize}\n  \\item 第一项\n  \\item 第二项\n\\end{itemize}",
+      "description": "用于在实验报告或论文中列举不具备严格先后次序的条目或仪器清单。"
+    }
+  ]
+}
