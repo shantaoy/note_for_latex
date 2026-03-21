@@ -13,21 +13,25 @@
   <script src="https://cdn.jsdelivr.net/npm/katex@0.16.38/dist/katex.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/katex@0.16.38/dist/contrib/auto-render.min.js"></script>
   <style>
-    /* 全局平滑滚动与基础背景 */
+    /* 全局平滑滚动与基础背景/字体配置 */
     html { scroll-behavior: smooth; }
-    body { background-color: #f8fafc; }
+    body { 
+      background-color: #f8fafc; 
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+      overflow-x: hidden;
+    }
     
-    /* Toast 提示样式优化 (增加毛玻璃和滑动动效) */
+    /* Toast 提示样式优化 */
     .toast {
-      visibility: hidden; min-width: 200px; 
-      background-color: rgba(15, 23, 42, 0.85); 
+      visibility: hidden; min-width: 250px; 
+      background-color: rgba(30, 41, 59, 0.95); /* 更深的 Slate-800 */
       backdrop-filter: blur(8px);
-      color: #fff; font-weight: 500;
-      text-align: center; border-radius: 9999px; padding: 10px 20px;
+      color: #fff; font-weight: 500; font-size: 0.875rem;
+      text-align: center; border-radius: 9999px; padding: 12px 24px;
       position: fixed; left: 50%; 
       transform: translate(-50%, 20px);
       bottom: 40px; opacity: 0; 
-      transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+      transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
       box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.2);
       z-index: 9999;
     }
@@ -35,62 +39,59 @@
       visibility: visible; opacity: 1; transform: translate(-50%, 0); 
     }
     
-    /* 管理按钮默认隐藏 (增加 !important 防止被 Tailwind 的 flex 覆盖) */
+    /* 管理按钮默认隐藏 */
     .admin-btn { display: none !important; } 
     
-    /* 符号代码块样式 */
-    .symbol-card code { 
-      background-color: #f1f5f9; padding: 2px 6px; 
-      border-radius: 6px; transition: background-color 0.3s ease;
+    /* 卡片基础悬浮样式 (移植自 latex.html) */
+    .symbol-card {
+      transition: all 0.2s ease-in-out;
+      position: relative;
+    }
+    .symbol-card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
     }
     
-    /* 自定义动画：卡片依次向上浮现 */
+    /* 瀑布流进入动画 */
     .card-enter {
       animation: fadeUp 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
-      opacity: 0;
-      transform: translateY(20px);
+      opacity: 0; transform: translateY(20px);
     }
     @keyframes fadeUp {
       to { opacity: 1; transform: translateY(0); }
     }
 
-    /* 自定义动画：弹窗弹性弹出 */
-    .modal-enter {
-      animation: modalPop 0.4s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
-    }
+    /* 弹窗动画 */
+    .modal-enter { animation: modalPop 0.4s cubic-bezier(0.34, 1.56, 0.64, 1) forwards; }
     @keyframes modalPop {
       0% { opacity: 0; transform: scale(0.9) translateY(10px); }
       100% { opacity: 1; transform: scale(1) translateY(0); }
     }
-    
-    /* 弹窗背景淡入 */
-    .backdrop-enter {
-      animation: fadeIn 0.3s ease-out forwards;
-    }
-    @keyframes fadeIn {
-      from { opacity: 0; }
-      to { opacity: 1; }
-    }
+    .backdrop-enter { animation: fadeIn 0.3s ease-out forwards; }
+    @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
   </style>
 </head>
 <body class="text-slate-800 antialiased selection:bg-blue-200 selection:text-blue-900">
 
-  <!-- 顶部导航栏 (增加毛玻璃效果和过渡) -->
-  <nav class="bg-white/80 backdrop-blur-md border-b border-slate-200 sticky top-0 z-40 shadow-sm transition-all duration-300">
+  <!-- 顶部导航栏 -->
+  <nav class="bg-white/90 backdrop-blur-md border-b border-slate-200 sticky top-0 z-40 shadow-sm transition-all duration-300">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
       <div class="flex justify-between h-16 items-center">
-        <div class="flex items-center gap-3 cursor-pointer group" onclick="adminClick()">
-          <div class="w-10 h-10 bg-blue-50 text-blue-600 rounded-xl flex items-center justify-center group-hover:bg-blue-600 group-hover:text-white transition-colors duration-300">
-            <span class="text-2xl font-serif">∑</span>
+        <!-- 标题与返回链接 -->
+        <div class="flex items-center gap-8">
+          <div class="flex items-center gap-2 cursor-pointer group" onclick="adminClick()" title="连续点击5次进入管理模式">
+            <span class="text-2xl text-blue-600 group-hover:scale-110 transition-transform font-serif">∑</span>
+            <span class="font-bold text-xl text-slate-900 tracking-tight">LaTeX 符号参考</span>
           </div>
-          <span class="font-bold text-xl text-slate-900 tracking-tight">LaTeX 符号参考</span>
+          <!-- 指向同一仓库其他页面的链接 -->
+          <a href="other_file.html" class="text-sm font-medium text-slate-500 hover:text-blue-600 transition-colors whitespace-nowrap">前往其他页面</a>
         </div>
-        <!-- 搜索框 -->
+        <!-- 搜索框 (胶囊形) -->
         <div class="flex-1 max-w-md ml-8">
           <div class="relative group">
-            <span class="absolute inset-y-0 left-0 flex items-center pl-3 text-slate-400 transition-colors duration-300 group-focus-within:text-blue-500">&#128269;</span>
+            <span class="absolute inset-y-0 left-0 flex items-center pl-3 text-slate-400 transition-colors duration-300">&#128269;</span>
             <input type="text" id="searchInput" placeholder="搜索符号、说明或类别..."
-                   class="block w-full pl-10 pr-4 py-2 bg-slate-50 border border-slate-200 rounded-lg focus:bg-white focus:ring-4 focus:ring-blue-100 focus:border-blue-400 transition-all duration-300 sm:text-sm outline-none">
+                   class="block w-full rounded-full border-0 py-2 pl-10 pr-4 text-slate-900 shadow-sm ring-1 ring-inset ring-slate-300 placeholder:text-slate-400 focus:ring-2 focus:ring-inset focus:ring-blue-600 sm:text-sm sm:leading-6 outline-none transition-all bg-slate-50 focus:bg-white">
           </div>
         </div>
       </div>
@@ -99,32 +100,30 @@
 
   <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
     <header class="mb-10 text-center max-w-3xl mx-auto">
-      <h1 id="titleHeader" class="text-4xl font-extrabold text-slate-900 mb-4 tracking-tight">Latex符号对照表</h1>
-      <p class="text-lg text-slate-500">常用 LaTeX 符号参考。</p>
+      <h1 id="titleHeader" class="text-4xl font-extrabold tracking-tight text-slate-900 sm:text-5xl mb-4">Latex符号对照表</h1>
+      <p class="text-lg leading-8 text-slate-600">常用 LaTeX 符号参考。</p>
     </header>
 
     <!-- 在线尝试 (Playground) 区域 -->
-    <section class="mb-12 bg-white rounded-2xl shadow-sm hover:shadow-md transition-shadow duration-300 border border-slate-200 p-6">
-      <h2 class="text-xl font-bold text-slate-800 mb-4 flex items-center gap-2">
-        <svg class="w-5 h-5 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path></svg>
+    <section class="mb-12 bg-white rounded-2xl shadow-sm border border-slate-200 p-6">
+      <h2 class="text-xl font-bold text-slate-900 mb-4 flex items-center gap-2">
+        <svg class="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path></svg>
         在线尝试 (Playground)
       </h2>
       <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
         <!-- 输入区 -->
         <div class="flex flex-col h-full">
           <div class="flex justify-between items-center mb-2">
-            <label for="playgroundInput" class="block text-sm font-semibold text-slate-600">输入 LaTeX 源码</label>
+            <label for="playgroundInput" class="block text-sm font-semibold text-slate-700">输入 LaTeX 源码</label>
             <button id="clearPlaygroundBtn" class="text-xs px-2 py-1 text-slate-500 hover:text-red-600 hover:bg-red-50 rounded transition-colors duration-200">清空内容</button>
           </div>
-          <!-- 修复无法拉动问题: 将 transition-all 替换为 transition-shadow -->
-          <textarea id="playgroundInput" placeholder="在此输入组合公式进行测试，例如：\int_{a}^{b} x^2 \,dx..."
-                    class="w-full h-40 p-4 bg-slate-50 border border-slate-200 rounded-xl focus:bg-white focus:ring-4 focus:ring-blue-100 focus:border-blue-400 transition-shadow duration-300 outline-none font-mono text-sm resize-y leading-relaxed"></textarea>
+          <textarea id="playgroundInput" placeholder="在此输入组合公式进行测试..."
+                    class="w-full h-40 p-4 bg-slate-50 border border-slate-200 rounded-xl focus:bg-white focus:ring-2 focus:ring-blue-500 transition-shadow duration-300 outline-none font-mono text-sm resize-y leading-relaxed"></textarea>
         </div>
         <!-- 预览区 -->
         <div class="flex flex-col h-full">
-          <label class="block text-sm font-semibold text-slate-600 mb-2 mt-[4px]">实时渲染结果</label>
-          <div id="playgroundOutput" class="h-40 p-4 border border-slate-200 rounded-xl bg-slate-50 flex items-center justify-center overflow-auto transition-shadow duration-300">
-            <!-- 渲染结果将在这里显示 -->
+          <label class="block text-sm font-semibold text-slate-700 mb-2 mt-[4px]">实时渲染结果</label>
+          <div id="playgroundOutput" class="h-40 p-4 border border-slate-200 rounded-xl bg-slate-50 flex items-center justify-center overflow-auto">
             <span class="text-slate-400 text-sm">等待输入...</span>
           </div>
         </div>
@@ -132,45 +131,43 @@
     </section>
 
     <div class="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-12">
-      <!-- 类别统计图 (增加 hover 阴影) -->
-      <section class="lg:col-span-1 bg-white rounded-2xl shadow-sm hover:shadow-md transition-shadow duration-300 border border-slate-200 p-6 flex flex-col items-center">
-        <h2 class="text-xl font-bold text-slate-800 mb-4 self-start">类别统计</h2>
-        <div class="w-full relative flex-1 min-h-[250px] flex items-center justify-center">
+      <!-- 类别统计图 -->
+      <section class="lg:col-span-1 bg-white rounded-2xl shadow-sm border border-slate-200 p-6 flex flex-col items-center">
+        <h2 class="text-xl font-bold text-slate-900 mb-2 self-start">类别统计</h2>
+        <div class="w-full relative flex-1 min-h-[300px] flex items-center justify-center">
             <canvas id="categoryChart"></canvas>
         </div>
       </section>
       
       <!-- 符号列表 -->
-      <section class="lg:col-span-2 bg-white rounded-2xl shadow-sm hover:shadow-md transition-shadow duration-300 border border-slate-200 p-6 flex flex-col">
+      <section class="lg:col-span-2 bg-white rounded-2xl shadow-sm border border-slate-200 p-6 flex flex-col">
         <!-- 分类筛选按钮 -->
-        <div id="categoryFilters" class="flex flex-wrap gap-2.5 mb-6"></div>
+        <div id="categoryFilters" class="flex flex-wrap gap-2 mb-6"></div>
         <!-- 符号卡片网格 -->
-        <div id="symbolsGrid" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-5 max-h-[600px] overflow-y-auto pr-2 pb-4 scroll-smooth"></div>
+        <div id="symbolsGrid" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 max-h-[600px] overflow-y-auto pr-2 pb-4 scroll-smooth"></div>
       </section>
     </div>
   </main>
 
-  <!-- 添加符号按钮（增加悬停放大和点击缩放动效） -->
-  <button id="addButton" onclick="toggleModal(true)" title="添加符号"
-          class="admin-btn fixed bottom-8 right-8 w-14 h-14 bg-blue-600 text-white text-2xl flex items-center justify-center rounded-full shadow-[0_4px_20px_rgba(37,99,235,0.4)] hover:bg-blue-700 hover:scale-110 active:scale-95 transition-all duration-300 z-30">
+  <!-- 添加符号按钮 -->
+  <button id="addButton" onclick="toggleModal(true)" title="添加自定义符号"
+          class="admin-btn fixed bottom-8 right-8 w-14 h-14 bg-blue-600 text-white text-3xl flex items-center justify-center rounded-full shadow-lg hover:bg-blue-700 hover:scale-105 active:scale-95 transition-all duration-300 z-30 focus:outline-none focus:ring-4 focus:ring-blue-300">
     +
   </button>
 
   <!-- 添加/编辑符号弹窗 -->
-  <div id="modalBackdrop" class="fixed inset-0 z-50 hidden items-center justify-center p-4 bg-slate-900/40 backdrop-blur-sm">
+  <div id="modalBackdrop" class="fixed inset-0 z-50 hidden items-center justify-center p-4 bg-slate-900/50 backdrop-blur-sm">
     <div id="modalContent" class="bg-white rounded-2xl shadow-2xl w-full max-w-md overflow-hidden border border-slate-100">
-      <div class="px-6 py-4 border-b border-slate-100 flex justify-between items-center bg-slate-50/50">
+      <div class="px-6 py-4 border-b border-slate-100 flex justify-between items-center bg-slate-50">
         <h3 class="text-lg font-bold text-slate-900" id="modalTitle">添加新符号</h3>
-        <button onclick="toggleModal(false)" class="text-slate-400 hover:text-slate-700 hover:rotate-90 transition-all duration-300 text-2xl outline-none">&times;</button>
+        <button onclick="toggleModal(false)" class="text-slate-400 hover:text-slate-600 transition-all duration-300 text-2xl outline-none">&times;</button>
       </div>
-      <form id="addSymbolForm" class="px-6 py-5 space-y-4">
-        <!-- 子类别下拉 -->
+      <form id="addSymbolForm" class="p-6 space-y-4">
         <div>
-          <label class="block text-sm font-semibold text-slate-700 mb-1.5">分类</label>
-          <select id="newSymbolCategory"
-                  class="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl focus:bg-white focus:ring-4 focus:ring-blue-100 focus:border-blue-400 transition-all duration-300 outline-none">
+          <label class="block text-sm font-semibold text-slate-700 mb-1">分类</label>
+          <select id="newSymbolCategory" class="w-full px-4 py-2 bg-white border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none">
             <option>希腊字母</option>
-            <option>数学符号</option>
+            <option>算术运算符</option>
             <option>关系符号</option>
             <option>微积分与微分算子</option>
             <option>物理专用符号</option>
@@ -179,24 +176,20 @@
           </select>
         </div>
         <div>
-          <label class="block text-sm font-semibold text-slate-700 mb-1.5">符号说明</label>
-          <input type="text" id="newSymbolLabel" required placeholder="中文描述 (如: 阿尔法)"
-                 class="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl focus:bg-white focus:ring-4 focus:ring-blue-100 focus:border-blue-400 transition-all duration-300 outline-none">
+          <label class="block text-sm font-semibold text-slate-700 mb-1">符号说明</label>
+          <input type="text" id="newSymbolLabel" required placeholder="中文描述 (如: 阿尔法)" class="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none">
         </div>
         <div>
-          <label class="block text-sm font-semibold text-slate-700 mb-1.5">LaTeX 源码</label>
-          <input type="text" id="newSymbolCode" required placeholder="例如：\alpha"
-                 class="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl focus:bg-white focus:ring-4 focus:ring-blue-100 focus:border-blue-400 transition-all duration-300 outline-none font-mono text-sm">
+          <label class="block text-sm font-semibold text-slate-700 mb-1">LaTeX 源码</label>
+          <input type="text" id="newSymbolCode" required placeholder="例如：\alpha" class="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none font-mono text-sm">
         </div>
         <div>
-          <label class="block text-sm font-semibold text-slate-700 mb-1.5">渲染预览</label>
-          <div id="newSymbolPreview" class="p-4 border border-slate-200 rounded-xl bg-slate-50 min-h-[4rem] flex items-center justify-center text-3xl transition-all duration-300"></div>
+          <label class="block text-sm font-semibold text-slate-700 mb-1">渲染预览</label>
+          <div id="newSymbolPreview" class="p-4 border border-slate-200 rounded-lg bg-slate-50 min-h-[4rem] flex items-center justify-center text-2xl overflow-x-auto"></div>
         </div>
-        <div class="flex justify-end space-x-3 pt-4">
-          <button type="button" onclick="toggleModal(false)"
-                  class="py-2.5 px-5 text-slate-600 bg-white border border-slate-200 rounded-xl hover:bg-slate-50 hover:text-slate-900 active:scale-95 transition-all duration-300 font-medium">取消</button>
-          <button type="submit" 
-                  class="py-2.5 px-6 bg-blue-600 text-white rounded-xl hover:bg-blue-700 hover:shadow-lg hover:shadow-blue-500/30 active:scale-95 transition-all duration-300 font-medium">保存</button>
+        <div class="pt-4 flex gap-3">
+          <button type="button" onclick="toggleModal(false)" class="flex-1 py-2 px-4 text-slate-700 border border-slate-300 rounded-lg hover:bg-slate-50 transition-colors font-medium">取消</button>
+          <button type="submit" class="flex-1 py-2 px-4 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-medium">保存符号</button>
         </div>
       </form>
     </div>
@@ -205,7 +198,7 @@
   <!-- 复制成功提示 -->
   <div id="copyToast" class="toast flex items-center gap-2 justify-center">
     <svg class="w-5 h-5 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
-    <span id="toastMsg">复制成功</span>
+    <span id="toastMsg">已复制到剪贴板！</span>
   </div>
 
   <script>
@@ -213,10 +206,15 @@
     let isAdmin = false;
     let allData = [];
     let currentCategory = '全部';
-    const GITHUB_OWNER = 'shantaoy';  // 请替换为实际用户名
+    const GITHUB_OWNER = 'YOUR_GITHUB_USERNAME';  // 请替换为实际用户名
     const GITHUB_REPO = 'note_for_latex';
     const DATA_PATH = 'data.json';
     let isEditing = false, editingIndex = -1;
+
+    // 预定义的类别颜色，供 Chart.js 使用
+    const categoryColors = [
+      '#3b82f6', '#8b5cf6', '#f43f5e', '#ec4899', '#10b981', '#f59e0b', '#06b6d4', '#84cc16'
+    ];
 
     // 切换模态框显示 (加入动画控制)
     function toggleModal(show) {
@@ -240,27 +238,26 @@
     // 显示提示信息
     function showToast(msg) {
       const toast = document.getElementById('copyToast');
-      document.getElementById('toastMsg').innerText = msg;
+      if(msg) document.getElementById('toastMsg').innerText = msg;
       toast.classList.add('show');
-      setTimeout(() => toast.classList.remove('show'), 2500);
+      setTimeout(() => toast.classList.remove('show'), 2000);
     }
 
     // 初始化：加载 data.json 并渲染
     async function initApp() {
       try {
         const res = await fetch(DATA_PATH);
-        allData = await res.json(); 
-        
-        if (sessionStorage.getItem('gh_token')) {
-          isAdmin = true;
-          document.getElementById('addButton').classList.remove('admin-btn');
-        }
-        renderCategories();
-        renderSymbols();
-        renderChart();
-      } catch (e) { 
-        console.error('数据加载失败', e); 
+        if(res.ok) allData = await res.json(); 
+      } catch (e) { console.error('数据加载失败', e); }
+
+      if (sessionStorage.getItem('gh_token')) {
+        isAdmin = true;
+        document.getElementById('addButton').classList.remove('admin-btn');
       }
+
+      renderCategories();
+      renderSymbols();
+      setTimeout(renderChart, 50); // 延时以确保 Chart.js 完全加载
 
       // 引入 localStorage 缓存机制
       const savedLatex = localStorage.getItem('playground_latex');
@@ -272,92 +269,89 @@
       renderPlayground();
     }
 
-    // 渲染类别筛选按钮 (加入微交互动效)
+    // 渲染类别筛选按钮 (移植 latex.html 药丸样式)
     function renderCategories() {
       const container = document.getElementById('categoryFilters');
-      const cats = ['全部','希腊字母','数学符号','关系符号','微积分与微分算子','物理专用符号','集合与逻辑符号','矩阵与括号'];
-      container.innerHTML = '';
-      cats.forEach(cat => {
-        const btn = document.createElement('button');
-        btn.textContent = cat;
-        // 添加 Tailwind 动效类
-        const baseClasses = 'px-4 py-1.5 border rounded-full text-sm font-medium transition-all duration-300 active:scale-95 focus:outline-none ';
-        btn.className = baseClasses + (cat === currentCategory 
-            ? 'bg-blue-600 border-blue-600 text-white shadow-md shadow-blue-500/30' 
-            : 'bg-white border-slate-200 text-slate-600 hover:border-blue-300 hover:text-blue-600 hover:bg-blue-50');
-        
-        btn.onclick = () => { 
-            currentCategory = cat; 
-            renderSymbols(); 
-            renderCategories(); 
-        };
-        container.appendChild(btn);
-      });
+      const cats = ['全部', ...new Set(allData.map(i => i.category))]; // 动态生成存在的分类
+      // 补充可能为空的默认分类，保证展示
+      const defaultCats = ['希腊字母','数学符号','关系符号','微积分与微分算子','物理专用符号','集合与逻辑符号','矩阵与括号'];
+      defaultCats.forEach(c => { if(!cats.includes(c)) cats.push(c); });
+
+      container.innerHTML = cats.map(cat => {
+        const isActive = cat === currentCategory;
+        const baseClass = "px-4 py-1.5 rounded-full text-sm font-medium transition-colors cursor-pointer border";
+        const activeClass = isActive 
+            ? "bg-slate-800 text-white border-slate-800 shadow-md" 
+            : "bg-white text-slate-600 border-slate-300 hover:bg-slate-50";
+        return `<button onclick="setCategory('${cat}')" class="${baseClass} ${activeClass}">${cat}</button>`;
+      }).join('');
     }
 
-    // 渲染符号卡片
+    // 从 HTML onclick 调用的辅助函数
+    function setCategory(cat) {
+        currentCategory = cat;
+        renderCategories();
+        renderSymbols();
+    }
+
+    // 渲染符号卡片 (深度融合 latex.html 结构)
     function renderSymbols() {
       const grid = document.getElementById('symbolsGrid');
       grid.innerHTML = '';
       const keyword = document.getElementById('searchInput').value.trim().toLowerCase();
       
-      let visualIndex = 0; // 用于计算瀑布流动画延迟
+      let visualIndex = 0;
 
       allData.forEach((item, idx) => {
         if ((currentCategory === '全部' || item.category === currentCategory) &&
             (item.label.includes(keyword) || item.latex.includes(keyword) || item.category.includes(keyword))) {
           
           const card = document.createElement('div');
-          // 增加悬浮悬浮上移、发光、渐变框等动效
-          card.className = `symbol-card group bg-white p-5 rounded-xl border border-slate-100 shadow-sm relative transition-all duration-300 hover:-translate-y-1.5 hover:shadow-xl hover:shadow-slate-200/50 hover:border-blue-200 card-enter`;
-          // 设置动画延迟实现瀑布流展示
-          card.style.animationDelay = `${visualIndex * 0.04}s`;
+          // 基础样式：白底、细边框、点击整卡复制
+          card.className = `symbol-card bg-white rounded-xl border border-slate-200 p-4 cursor-pointer flex flex-col justify-between group card-enter`;
+          card.style.animationDelay = `${visualIndex * 0.03}s`;
           visualIndex++;
-
-          // 公式渲染 (增加大小过渡)
-          const formulaDiv = document.createElement('div');
-          formulaDiv.className = 'text-3xl mb-4 flex justify-center items-center h-16 transition-transform duration-300 group-hover:scale-110';
-          try { katex.render(item.latex, formulaDiv, {throwOnError:false}); }
-          catch { formulaDiv.innerText = item.latex; }
-          card.appendChild(formulaDiv);
-
-          // 中文说明
-          const descP = document.createElement('p');
-          descP.className = 'text-sm font-medium text-slate-700 mb-3';
-          descP.innerText = item.label;
-          card.appendChild(descP);
-
-          // 代码示例行与复制按钮
-          const codeDiv = document.createElement('div');
-          codeDiv.className = 'flex justify-between items-center text-xs mt-auto';
           
-          const codeEl = document.createElement('code');
-          codeEl.className = 'font-mono text-slate-500 overflow-hidden text-ellipsis whitespace-nowrap group-hover:bg-blue-50 group-hover:text-blue-700';
-          codeEl.innerText = item.latex;
-          codeDiv.appendChild(codeEl);
-          
-          const copyBtn = document.createElement('button');
-          // 复制按钮默认淡化，悬浮卡片时显现，点击有缩放
-          copyBtn.innerHTML = `<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"></path></svg>`;
-          copyBtn.title = '复制 LaTeX 源码';
-          copyBtn.className = 'p-1.5 rounded-md text-slate-400 opacity-50 hover:opacity-100 group-hover:opacity-100 hover:text-blue-600 hover:bg-blue-50 active:scale-90 transition-all duration-300 cursor-pointer';
-          copyBtn.onclick = () => {
+          // 点击复制整卡
+          card.onclick = () => {
             navigator.clipboard.writeText(item.latex);
-            showToast('已复制源码');
+            showToast(`已复制: ${item.latex}`);
           };
-          codeDiv.appendChild(copyBtn);
-          card.appendChild(codeDiv);
 
-          // 管理模式：编辑/删除按钮
+          // 防止 XSS 并妥善展示代码
+          const safeLatex = item.latex.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+
+          // 注入结构 (标签 -> 浅灰公式预览盒 -> 标题与粉色代码)
+          card.innerHTML = `
+            <div class="flex justify-between items-start mb-4 relative">
+                <span class="text-xs font-semibold px-2 py-1 rounded bg-slate-100 text-slate-600">${item.category}</span>
+            </div>
+            <div class="text-center py-4 mb-4 bg-slate-50 rounded-lg overflow-x-auto min-h-[64px] flex items-center justify-center formula-container">
+                <span class="text-xl math-preview transition-transform duration-300 group-hover:scale-110"></span>
+            </div>
+            <div>
+                <div class="text-sm font-medium text-slate-900 mb-1">${item.label}</div>
+                <code class="text-xs text-pink-600 bg-pink-50 px-2 py-1 rounded block truncate" title="${item.latex}">${safeLatex}</code>
+            </div>
+          `;
+
+          // 渲染公式
+          const formulaSpan = card.querySelector('.math-preview');
+          try { katex.render(item.latex, formulaSpan, {throwOnError:false, displayMode: false}); }
+          catch { formulaSpan.innerText = item.latex; }
+
+          // 管理模式：编辑与删除按钮 (悬浮显示在右上角外侧一点点)
           if (isAdmin) {
             const actionsDiv = document.createElement('div');
-            actionsDiv.className = 'absolute top-3 right-3 flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300';
+            actionsDiv.className = 'absolute -top-2 -right-2 flex gap-1.5 opacity-0 group-hover:opacity-100 transition-opacity duration-200 z-10';
             
+            // 编辑按钮 (蓝圆)
             const editBtn = document.createElement('button');
             editBtn.innerHTML = '✎';
-            editBtn.className = 'text-blue-500 hover:text-blue-700 w-6 h-6 rounded bg-blue-50 flex items-center justify-center hover:scale-110 active:scale-95 transition-all';
+            editBtn.className = 'w-7 h-7 bg-blue-500 text-white rounded-full flex items-center justify-center text-xs shadow-sm hover:bg-blue-600 transition-colors focus:outline-none';
             editBtn.title = "编辑";
-            editBtn.onclick = () => {
+            editBtn.onclick = (e) => {
+              e.stopPropagation(); // 阻止卡片级别的复制事件
               isEditing = true; editingIndex = idx;
               document.getElementById('modalTitle').innerText = '编辑符号';
               document.getElementById('newSymbolCategory').value = item.category;
@@ -366,34 +360,40 @@
               try {
                   const preview = document.getElementById('newSymbolPreview');
                   katex.render(item.latex, preview, {throwOnError:false});
-              } catch(e) {}
+              } catch(err) {}
               toggleModal(true);
             };
             
+            // 删除按钮 (红圆)
             const delBtn = document.createElement('button');
-            delBtn.innerHTML = '×';
-            delBtn.className = 'text-red-500 hover:text-red-700 w-6 h-6 rounded bg-red-50 flex items-center justify-center hover:scale-110 active:scale-95 transition-all text-lg font-bold pb-0.5';
+            delBtn.innerHTML = '&times;';
+            delBtn.className = 'w-7 h-7 bg-red-500 text-white rounded-full flex items-center justify-center text-lg shadow-sm hover:bg-red-600 transition-colors focus:outline-none pb-0.5';
             delBtn.title = "删除";
-            delBtn.onclick = async () => {
+            delBtn.onclick = async (e) => {
+              e.stopPropagation(); // 阻止复制
               if (confirm('确认删除该符号？')) {
-                // 删除时添加一个缩小的动画再执行实际删除
                 card.style.transform = 'scale(0.8)';
                 card.style.opacity = '0';
                 setTimeout(async () => {
                     allData.splice(idx,1);
                     await saveData('删除符号');
-                    renderSymbols(); renderChart();
-                }, 300);
+                    renderSymbols(); renderChart(); renderCategories();
+                }, 200);
               }
             };
             
             actionsDiv.appendChild(editBtn);
             actionsDiv.appendChild(delBtn);
-            card.appendChild(actionsDiv);
+            // 将按钮容器附在卡片的头部相对定位区
+            card.querySelector('.relative').appendChild(actionsDiv);
           }
           grid.appendChild(card);
         }
       });
+
+      if (grid.innerHTML === '') {
+        grid.innerHTML = `<div class="col-span-full py-12 text-center text-slate-400">未找到匹配的符号。</div>`;
+      }
     }
 
     // 提交添加/编辑表单
@@ -406,31 +406,23 @@
       if (isEditing && editingIndex >= 0) {
         allData[editingIndex] = {latex, label, category};
       } else {
-        // 查找属于同一个 category 的最后一个元素的索引
+        // 分组插入逻辑
         let insertIndex = -1;
         for (let i = allData.length - 1; i >= 0; i--) {
-          if (allData[i].category === category) {
-            insertIndex = i;
-            break;
-          }
+          if (allData[i].category === category) { insertIndex = i; break; }
         }
-        
-        if (insertIndex !== -1) {
-          // 如果找到了同类元素，则插入到该元素之后
-          allData.splice(insertIndex + 1, 0, {latex, label, category});
-        } else {
-          // 如果没有找到（新类别），则直接追加到末尾
-          allData.push({latex, label, category});
-        }
+        if (insertIndex !== -1) allData.splice(insertIndex + 1, 0, {latex, label, category});
+        else allData.push({latex, label, category});
       }
       
       await saveData(isEditing ? '编辑符号' : '添加符号');
       toggleModal(false);
+      renderCategories();
       renderSymbols(); 
       renderChart();
     });
 
-    // 保存到 GitHub
+    // 保存到 GitHub (维持原逻辑)
     async function saveData(action) {
       const token = sessionStorage.getItem('gh_token');
       if (!token) { alert('请先进入管理员模式'); return; }
@@ -452,7 +444,7 @@
         if (updateRes.ok) showToast('提交成功，Pages 编译需 1-2 分钟');
         else showToast(`错误: ${result.message}`);
       } catch (err) {
-        showToast('请求失败，仅在本地生效');
+        showToast('网络请求失败，仅在当前页面缓存中生效');
       }
     }
 
@@ -480,40 +472,50 @@
     document.getElementById('newSymbolCode').addEventListener('input', (e) => {
       const preview = document.getElementById('newSymbolPreview');
       try { katex.render(e.target.value, preview, {throwOnError:false}); }
-      catch { preview.innerText = '格式解析中...'; preview.className = "p-4 border border-slate-200 rounded-xl bg-slate-50 min-h-[4rem] flex items-center justify-center text-sm text-slate-400"; }
+      catch { preview.innerText = '格式解析中...'; }
     });
 
-    // 绘制饼图：统计各子类别数量 (加入动画配置)
+    // 绘制饼图 (移植自 latex.html 风格)
     function renderChart() {
       const ctx = document.getElementById('categoryChart');
-      if (ctx.chart) ctx.chart.destroy();
-      const cats = ['希腊字母','数学符号','关系符号','微积分与微分算子','物理专用符号','集合与逻辑符号','矩阵与括号'];
-      const counts = cats.map(cat => allData.filter(i=>i.category===cat).length);
+      if (!ctx || typeof Chart === 'undefined') return;
+      if (ctx.chartInstance) ctx.chartInstance.destroy();
       
-      ctx.chart = new Chart(ctx, {
+      const cats = [...new Set(allData.map(i => i.category))];
+      const counts = cats.map(cat => allData.filter(i=>i.category===cat).length);
+      const bgColors = cats.map((_, i) => categoryColors[i % categoryColors.length]);
+      
+      ctx.chartInstance = new Chart(ctx, {
         type: 'doughnut',
         data: {
           labels: cats,
           datasets: [{ 
             data: counts,
-            backgroundColor: ['#3b82f6','#6366f1','#ef4444','#10b981','#8b5cf6','#f59e0b','#ec4899'],
+            backgroundColor: bgColors,
             borderWidth: 0,
-            hoverOffset: 8 // 图表 hover 时的外扩动效
+            hoverOffset: 6
           }]
         },
         options: { 
           responsive: true,
           maintainAspectRatio: false,
-          animation: { animateScale: true, animateRotate: true, duration: 800, easing: 'easeOutQuart' },
-          plugins:{ 
-            legend:{ position:'bottom', labels: { padding: 15, font: { family: 'inherit' } } },
-            tooltip: {
-                backgroundColor: 'rgba(15, 23, 42, 0.9)',
-                padding: 12,
-                cornerRadius: 8,
-            }
+          cutout: '65%', // 移植的较细的环形图效果
+          animation: { animateScale: true, animateRotate: true, duration: 600, easing: 'easeOutQuart' },
+          plugins: { 
+            legend: { 
+                position: 'bottom', 
+                labels: { padding: 20, font: { size: 12 }, usePointStyle: true } // 点状图例
+            },
+            tooltip: { backgroundColor: 'rgba(30, 41, 59, 0.9)', padding: 12, cornerRadius: 8 }
           },
-          layout: { padding: 10 }
+          onClick: (event, elements) => {
+             // 点击图表直接过滤类别
+             if (elements.length > 0) {
+                 const index = elements[0].index;
+                 const cat = ctx.chartInstance.data.labels[index];
+                 setCategory(cat);
+             }
+          }
         }
       });
     }
@@ -524,7 +526,6 @@
       const input = inputEl.value.trim();
       const output = document.getElementById('playgroundOutput');
       
-      // 每次渲染时同步保存到本地存储
       localStorage.setItem('playground_latex', inputEl.value);
 
       if (!input) {
@@ -532,20 +533,14 @@
         return;
       }
       try { 
-        katex.render(input, output, {
-          throwOnError: false,
-          displayMode: true // 大公式模式
-        }); 
+        katex.render(input, output, { throwOnError: false, displayMode: true }); 
       }
       catch (e) { 
         output.innerHTML = '<span class="text-slate-400 text-sm">格式解析中...</span>'; 
       }
     }
     
-    // 绑定实时输入监听
     document.getElementById('playgroundInput').addEventListener('input', renderPlayground);
-
-    // 绑定清空按钮
     document.getElementById('clearPlaygroundBtn').addEventListener('click', () => {
       document.getElementById('playgroundInput').value = '';
       renderPlayground();
