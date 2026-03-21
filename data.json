@@ -380,6 +380,11 @@
     "category": "物理专用符号"
   },
   {
+    "latex": "\\hat f",
+    "label": "算符符号",
+    "category": "物理专用符号"
+  },
+  {
     "latex": "\\in",
     "label": "属于符号 ∈",
     "category": "集合与逻辑符号"
