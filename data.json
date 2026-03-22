@@ -305,6 +305,11 @@
     "category": "数学符号"
   },
   {
+    "latex": "\\left. \\frac{\\partial f}{\\partial x} \\right|_{x=0}",
+    "label": "某点取值",
+    "category": "数学符号"
+  },
+  {
     "latex": "=",
     "label": "等号",
     "category": "关系符号"
