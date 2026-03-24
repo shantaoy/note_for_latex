@@ -310,6 +310,11 @@
     "category": "数学符号"
   },
   {
+    "latex": "30^\\circ",
+    "label": "角度",
+    "category": "数学符号"
+  },
+  {
     "latex": "=",
     "label": "等号",
     "category": "关系符号"
