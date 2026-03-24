@@ -315,6 +315,11 @@
     "category": "数学符号"
   },
   {
+    "latex": "\\left| a\\right| or \\lvert a\\rvert",
+    "label": "绝对值",
+    "category": "数学符号"
+  },
+  {
     "latex": "=",
     "label": "等号",
     "category": "关系符号"
